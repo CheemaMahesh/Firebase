@@ -1,6 +1,10 @@
 //Blogging App using Hooks
 import { useState, useRef, useEffect, useReducer } from "react";
 import {db} from "../firebaseInit";
+import { collection, addDoc ,setDoc, doc } from "firebase/firestore"; 
+
+
+
 
 // 2. Reducer function
 const blogsReducer = (state, action) => {
@@ -39,12 +43,22 @@ export default function Blog(){
         }
       }, [blogs]);
 
-    function handleSubmit(e){
+    async function handleSubmit(e){
         e.preventDefault();
 
         //setBlogs([{title: formData.title,content:formData.content}, ...blogs]);
         // 3. Replacing setBlogs with dispatch function
         dispatch({type: "ADD", blog: {title:formData.title, content:formData.content}});
+
+        // Add a new document with a generated id.
+        const docRef=doc(collection(db, "blogs"));
+
+ await setDoc(docRef, {
+  title:formData.title,
+  content: formData.content,
+  createdOn:new Date()
+});
+// console.log("Document written with ID: ", docRef.id);
 
         setformData({title:"", content:""});
         //Setting focus on title after adding a blog
