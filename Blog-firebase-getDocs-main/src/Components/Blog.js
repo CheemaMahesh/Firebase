@@ -2,10 +2,10 @@
 import { useState, useRef, useEffect } from "react";
 
 //Import fireStore reference from frebaseInit file
-import {db} from "../firebaseInit";
+import {db} from "../firebase-init";
 
 //Import all the required functions from fireStore
-import { collection, doc, getDocs, setDoc,onSnapshot, deleteDoc} from "firebase/firestore"; 
+import { collection, doc, getDocs, setDoc} from "firebase/firestore"; 
 
 export default function Blog(){
 
@@ -23,25 +23,11 @@ export default function Blog(){
         /*********************************************************************** */
         /** get all the documents from the fireStore using getDocs() */ 
         /*********************************************************************** */
-        // async function fetchData(){
-        //     const snapShot =await getDocs(collection(db, "blogs"));
-        //     console.log(snapShot);
+        async function fetchData(){
+            const snapShot =await getDocs(collection(db, "blogs"));
+            console.log(snapShot);
 
-        //     const blogs = snapShot.docs.map((doc) => {
-        //         return{
-        //             id: doc.id,
-        //             ...doc.data()
-        //         }
-        //     })
-        //     console.log(blogs);
-        //     setBlogs(blogs);
-
-        // }
-
-        // fetchData();
-
-        const sub=onSnapshot(collection(db,"blogs"),(snapShot)=>{
-                const blogs = snapShot.docs.map((doc) => {
+            const blogs = snapShot.docs.map((doc) => {
                 return{
                     id: doc.id,
                     ...doc.data()
@@ -49,7 +35,10 @@ export default function Blog(){
             })
             console.log(blogs);
             setBlogs(blogs);
-        })
+
+        }
+
+        fetchData();
         /*********************************************************************** */
     },[]);
 
@@ -79,10 +68,7 @@ export default function Blog(){
 
     async function removeBlog(i){
 
-        // setBlogs( blogs.filter((blog,index)=> index !== i));
-
-        const docRef=doc(db,"blogs",i);
-        deleteDoc(docRef);
+        setBlogs( blogs.filter((blog,index)=> index !== i));
  
      }
 
@@ -128,7 +114,7 @@ export default function Blog(){
 
                 <div className="blog-btn">
                         <button onClick={() => {
-                             removeBlog(blog.id)
+                             removeBlog(i)
                         }}
                         className="btn remove">
 
